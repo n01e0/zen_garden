@@ -10,7 +10,11 @@ pub fn main() anyerror!void {
     const pathes = args[1..args.len];
 
     for (pathes) |path| {
-        var buf = try fs.readFileAlloc(&arena, path);
-        try stdout.write(buf);
+        if (fs.readFileAlloc(&arena, path)) |buf| {
+            try stdout.write(buf);
+        } else |err| {
+            try stdout.write("File not found\n");
+            std.os.exit(1);
+        }
     }
 }
