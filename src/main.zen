@@ -1,0 +1,19 @@
+const std = @import("std");
+const fs = std.fs;
+const heap = std.heap;
+
+pub fn main() anyerror!void {
+    var arena = heap.ArenaAllocator{ .allocator = &heap.direct_allocator };
+    defer arena.deinit();
+    const stdout = try fs.getStdOut();
+    const args = try std.process.argsAlloc(&arena);
+    const pathes = args[1..args.len];
+
+    for (pathes) |path| {
+        if (fs.readFileAlloc(&arena, path)) |buf| {
+            try stdout.write(buf);
+        } else |err| {
+            return err;
+        }
+    }
+}
