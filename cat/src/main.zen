@@ -7,6 +7,18 @@ pub fn main() anyerror!void {
     defer arena.deinit();
     const stdout = try fs.getStdOut();
     const args = try std.process.argsAlloc(&arena);
+
+    if (args.len == 1) {
+        const stdin = try fs.getStdIn();
+        var buf: [1]u8 = undefined;
+        while (fs.read.fill(stdin, &buf)) |in| {
+            try stdout.write(in);
+        } else |err| {
+            try stdout.write("Oops\n");
+            std.os.exit(1);
+        }
+    }
+
     const pathes = args[1..args.len];
 
     for (pathes) |path| {
