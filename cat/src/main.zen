@@ -26,6 +26,7 @@ pub fn main() anyerror!void {
             try stdout.write(buf);
         } else |err| {
             try stdout.write("File not found\n");
+            arena.deinit();
             std.os.exit(1);
         }
     }
